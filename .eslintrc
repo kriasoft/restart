@@ -1,0 +1,19 @@
+{
+  "extends": ["airbnb-base", "prettier"],
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "global-require": "off",
+    "import/no-dynamic-require": "off"
+  },
+  "overrides": [
+    {
+      "files": "test.js",
+      "env": {
+        "jest": true
+      }
+    }
+  ]
+}
