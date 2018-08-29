@@ -15,7 +15,7 @@ $ npm install restart --save-dev
 
 ## How to Use
 
-#### `app.js`
+#### `build/app.js`
 
 ```js
 const express = require('express');
@@ -34,14 +34,17 @@ module.exports = app.listen(8080);
 
 ```js
 if (process.env.NODE_ENV === 'production') {
-  require('./app');
+  // In a production environment launch the Node.js app directly.
+  require('./build/app');
 } else {
+  // Otherwise, start building the app from source and
+  // restart it upon new changes in the /build folder.
   const restart = require('restart');
   const build = require('./scripts/build');
   build({
     watch: true,
     onComplete: () => {
-      restart({ entry: './app' });
+      restart({ entry: './build/app' });
     },
   });
 }
