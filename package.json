@@ -1,6 +1,6 @@
 {
   "name": "restart",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0",
   "description": "Restart Node.js application in development mode.",
   "engines": {
     "node": ">=6"

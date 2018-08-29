@@ -15,18 +15,40 @@ $ npm install restart --save-dev
 
 ## How to Use
 
-```js
-const restart = require('restart');
-const build = require('./build');
+#### `app.js`
 
-build({
-  watch: true,
-  onComplete() {
-    restart({
-      entry: './build/server',
-    });
-  },
+```js
+const express = require('express');
+const app = express();
+
+let count = 0;
+
+app.get('/', (req, res) => {
+  res.send(`count: ${++count}`);
 });
+
+module.exports = app.listen(8080);
+```
+
+#### `server.js`
+
+```js
+if (process.env.NODE_ENV === 'production') {
+  require('./app');
+} else {
+  const restart = require('restart');
+  const build = require('./scripts/build');
+  build({
+    watch: true,
+    onComplete: () => {
+      restart({ entry: './app' });
+    },
+  });
+}
+```
+
+```bash
+$ node ./server
 ```
 
 ## License
