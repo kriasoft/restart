@@ -34,11 +34,23 @@ function restart(options = {}) {
   }
 
   const entry = path.resolve(options.entry);
+  const srcPrefix = path.join(path.dirname(entry), './');
+  const npmPrefix = path.resolve('./node_modules/');
 
   if (server && server.close) {
     return new Promise(resolve => {
       server.close(() => {
         clearModule(entry);
+
+        Object.keys(require.cache).forEach(moduleId => {
+          if (
+            moduleId.startsWith(srcPrefix) &&
+            !moduleId.startsWith(npmPrefix)
+          ) {
+            clearModule(moduleId);
+          }
+        });
+
         resolve(launch(entry));
       });
     });
