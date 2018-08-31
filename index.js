@@ -4,14 +4,15 @@
 
 'use strict;';
 
+const path = require('path');
 const clearModule = require('clear-module');
 
 let server;
 
-function launch(options) {
+function launch(entry) {
   return new Promise((resolve, reject) => {
     try {
-      server = (x => x.default || x)(require(options.entry));
+      server = (x => x.default || x)(require(entry));
       server.once('error', reject);
       server.once('listening', () => {
         resolve(server);
@@ -23,21 +24,28 @@ function launch(options) {
 }
 
 function restart(options = {}) {
+  if (typeof options === 'string') {
+    // eslint-disable-next-line no-param-reassign
+    options = { entry: options };
+  }
+
   if (!options.entry) {
     throw new TypeError('The options argument must have an "entry" field.');
   }
 
+  const entry = path.resolve(options.entry);
+
   if (server && server.close) {
     return new Promise(resolve => {
       server.close(() => {
-        clearModule(options.entry);
-        resolve(launch(options));
+        clearModule(entry);
+        resolve(launch(entry));
       });
     });
   }
 
-  clearModule(options.entry);
-  return launch(options);
+  clearModule(entry);
+  return launch(entry);
 }
 
 module.exports = restart;
